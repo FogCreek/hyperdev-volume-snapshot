@@ -25,7 +25,7 @@ func snapshotVolume(res http.ResponseWriter, req *http.Request) {
 
 	log.Println("Snapshotting volume of project:", projectId)
 
-	cmd := exec.Command("rbd-snapshot", projectId)
+	cmd := exec.Command("bash", SCRIPT, projectId)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
@@ -45,3 +45,33 @@ func snapshotVolume(res http.ResponseWriter, req *http.Request) {
 
 	fmt.Fprint(res, string(outgoingJSON))
 }
+
+var SCRIPT = `
+#!/usr/bin/env bash
+set -e
+
+srcId=$1
+
+if [ ! ${srcId} ]
+then
+    echo "Usage: rbd-snapshot source-volume"
+    exit 1
+fi
+
+if [ ! $(rbd ls | grep -x ${srcId}) ]
+then
+    echo "Source volume ${srcId} does not exist"
+    exit 1
+fi
+
+snapId=${srcId}@$(date -u -Iseconds)
+
+fsfreeze -f /var/lib/docker-volumes/rbd/rbd/${srcId}
+
+rbd snap create ${snapId}
+rbd snap protect ${snapId}
+
+fsfreeze -u /var/lib/docker-volumes/rbd/rbd/${srcId}
+
+echo ${snapId}
+`
