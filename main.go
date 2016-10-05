@@ -57,13 +57,13 @@ srcId=%s
 
 if [ ! ${srcId} ]
 then
-    >&2 echo "Usage: rbd-snapshot source-volume"
+    >&2 echo -n "Usage: rbd-snapshot source-volume"
     exit 1
 fi
 
 if [ ! -d "/var/lib/docker-volumes/rbd/rbd/${srcId}" ]
 then
-    >&2 echo "Source volume ${srcId} is not mounted"
+    >&2 echo -n "Source volume ${srcId} is not mounted"
     exit 1
 fi
 
