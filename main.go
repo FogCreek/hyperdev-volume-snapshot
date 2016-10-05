@@ -57,13 +57,13 @@ srcId=%s
 
 if [ ! ${srcId} ]
 then
-    echo "Usage: rbd-snapshot source-volume"
+    >&2 echo "Usage: rbd-snapshot source-volume"
     exit 1
 fi
 
-if [ ! $(rbd ls | grep -x ${srcId}) ]
+if [ ! -d "/var/lib/docker-volumes/rbd/rbd/${srcId}" ]
 then
-    echo "Source volume ${srcId} does not exist"
+    >&2 echo "Source volume ${srcId} is not mounted"
     exit 1
 fi
 
@@ -76,5 +76,5 @@ rbd snap protect ${snapId}
 
 fsfreeze -u /var/lib/docker-volumes/rbd/rbd/${srcId}
 
-echo ${snapId}
+echo -n ${snapId}
 `
