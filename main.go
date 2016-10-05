@@ -25,7 +25,7 @@ func snapshotVolume(res http.ResponseWriter, req *http.Request) {
 
 	log.Println("Snapshotting volume of project:", projectId)
 
-	cmd := exec.Command("/bin/bash", SCRIPT, projectId)
+	cmd := exec.Command("/bin/bash", "-c", SCRIPT, projectId)
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 	cmd.Stdout = &stdout
