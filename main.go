@@ -26,16 +26,19 @@ func snapshotVolume(res http.ResponseWriter, req *http.Request) {
 	log.Println("Snapshotting volume of project:", projectId)
 
 	cmd := exec.Command("bash", SCRIPT, projectId)
-	var out bytes.Buffer
-	cmd.Stdout = &out
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
-		log.Println(err.Error())
-		http.Error(res, err.Error(), http.StatusInternalServerError)
+		errMsg := fmt.Sprintf("%s: %s", err.Error(), stderr.String())
+		log.Println(errMsg)
+		http.Error(res, errMsg, http.StatusInternalServerError)
 		return
 	}
 
-	outgoingJSON, err := json.Marshal(out.String())
+	outgoingJSON, err := json.Marshal(stdout.String())
 
 	if err != nil {
 		log.Println(err.Error())
