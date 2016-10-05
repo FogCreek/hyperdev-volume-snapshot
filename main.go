@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -16,7 +17,7 @@ func main() {
 	http.ListenAndServe(":8080", router)
 }
 
-func handleMovie(res http.ResponseWriter, req *http.Request) {
+func snapshotVolume(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 
 	vars := mux.Vars(req)
