@@ -67,12 +67,11 @@ then
     exit 1
 fi
 
-snapId=${srcId}@$(date -u -Iseconds)
+snapId=${srcId}@$(date +%s%N | cut -b1-13)
 
 fsfreeze -f /var/lib/docker-volumes/rbd/rbd/${srcId}
 
-rbd snap create ${snapId}
-rbd snap protect ${snapId}
+rbd cp ${srcId} ${snapId}
 
 fsfreeze -u /var/lib/docker-volumes/rbd/rbd/${srcId}
 
