@@ -23,8 +23,6 @@ func snapshotVolume(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	projectId := vars["projectId"]
 
-	log.Println("Snapshotting volume of project:", projectId)
-
 	cmd := exec.Command("/bin/bash", "-c", fmt.Sprintf(SCRIPT, projectId))
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
@@ -67,7 +65,7 @@ then
     exit 1
 fi
 
-snapId=${srcId}@$(date +%s%N | cut -b1-13)
+snapId=${srcId}_$( date +%%s%%N | cut -b1-13 )
 
 fsfreeze -f /var/lib/docker-volumes/rbd/rbd/${srcId}
 
